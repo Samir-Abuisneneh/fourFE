@@ -1,0 +1,9 @@
+.tableContainer {
+    max-width: 600px;
+    margin: 20px auto;
+  }
+  
+  .tableHeaderCell {
+    font-weight: bold;
+    background-color: #f2f2f2;
+  }
