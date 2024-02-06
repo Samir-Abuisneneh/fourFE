@@ -1,5 +1,5 @@
 import { Button, TextField, Box, Container, Typography, Snackbar } from "@mui/material";
-import styled from "@emotion/styled";
+import { styled } from '@mui/system';
 import { useState } from "react";
 
 const FuturisticButton = styled(Button)`
@@ -11,9 +11,20 @@ const FuturisticButton = styled(Button)`
   box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
 `;
 
+// Brighter TextField
+const BrightTextField = styled(TextField)({
+  '& .MuiFilledInput-root': {
+    background: 'white',
+    '&:hover': {
+      backgroundColor: 'white',
+    },
+  },
+});
+
+// Reuse the Logo component from the Login screen
 const Logo = styled("img")`
-  width: 100px;
-  height: 100px;
+  width: 700px;
+  height: 400px;
 `;
 
 const RegisterScreen = () => {
@@ -68,16 +79,17 @@ const RegisterScreen = () => {
           backgroundColor: "#ffffff",
         }}
       >
+        {/* Reuse the Logo component here */}
         <Logo src="logo.png" alt="logo" />
         <Typography variant="h4" component="h1" gutterBottom>
           Register
         </Typography>
         <form onSubmit={handleSubmit}>
-          <TextField id="username" label="Username" variant="filled" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <BrightTextField id="username" label="Username" variant="filled" value={username} onChange={(e) => setUsername(e.target.value)} />
           <Box height={16} />
-          <TextField id="email" label="Email" variant="filled" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <BrightTextField id="email" label="Email" variant="filled" value={email} onChange={(e) => setEmail(e.target.value)} />
           <Box height={16} />
-          <TextField id="password" label="Password" type="password" variant="filled" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <BrightTextField id="password" label="Password" type="password" variant="filled" value={password} onChange={(e) => setPassword(e.target.value)} />
           <Box height={16} />
           <FuturisticButton type="submit">Register</FuturisticButton>
         </form>

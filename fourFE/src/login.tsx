@@ -1,7 +1,11 @@
-import { Button, TextField, Box, Container, Typography, Snackbar } from "@mui/material";
-import styled from "@emotion/styled";
-import React, { useState } from 'react';
+// Importing necessary components and hooks
+import { Button, TextField, Box, Container, Typography } from "@mui/material";
+import { styled } from '@mui/system';
+import { useMediaQuery } from "@mui/material";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+// Styling the button using MUI's styled function
 const FuturisticButton = styled(Button)`
   background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
   border: 0;
@@ -9,24 +13,42 @@ const FuturisticButton = styled(Button)`
   height: 48px;
   padding: 0 30px;
   box-shadow: 0 3px 5px 2px rgba(255, 105, 135, 0.3);
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
+// Styling the TextField to have a brighter background
+const BrightTextField = styled(TextField)({
+  '& .MuiFilledInput-root': {
+    background: 'white',
+    '&:hover': {
+      backgroundColor: 'white',
+    },
+  },
+});
+
+// Styling the logo as an image
 const Logo = styled("img")`
-  width: 100px;
-  height: 100px;
+  width: 700px;
+  height: 400px;
 `;
 
+// LoginScreen component
 const LoginScreen = () => {
+  // State variables
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
-  const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const navigate = useNavigate();
 
+  // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // TODO: Add validation for the inputs
-
+    // Fetching data from the authentication API
     const response = await fetch('http://localhost:8080/api/auth/signin', {
       method: 'POST',
       headers: {
@@ -38,24 +60,25 @@ const LoginScreen = () => {
       }),
     });
 
-    const data = await response.json();
-
     if (response.ok) {
-      setOpenSuccessSnackbar(true); // Open success Snackbar on successful login
+      // Parsing the response data
+      const data = await response.json();
+
+      // If the request is successful, save the token
       localStorage.setItem('token', data.token);
+      setErrorMessage(''); // Clear the error message
+
+      // Navigate to the '/play' endpoint
+      navigate('/play');
+    } else if (response.status === 403 ) {
+      // Set the error message for wrong credentials
+      setErrorMessage('Incorrect username or password. Please try again.');
     } else {
-      setOpenErrorSnackbar(true); // Open error Snackbar on unsuccessful login
+      console.error(`Error: ${response.status}`);
     }
   };
 
-  const handleSuccessSnackbarClose = () => {
-    setOpenSuccessSnackbar(false); // Close success Snackbar
-  };
-
-  const handleErrorSnackbarClose = () => {
-    setOpenErrorSnackbar(false); // Close error Snackbar
-  };
-
+  // JSX structure for the component
   return (
     <div>
       <Container
@@ -65,37 +88,29 @@ const LoginScreen = () => {
           alignItems: "center",
           justifyContent: "center",
           minHeight: "100vh",
-          backgroundColor: "#282c34",
+          backgroundColor: prefersDarkMode ? "#282c34" : "#fff",
         }}
       >
         <Logo src="logo.png" alt="logo" />
         <Typography variant="h4" component="h1" gutterBottom>
-          Your Title
+          Log in
         </Typography>
+        {errorMessage && (  
+          <Typography color="error" variant="body1" gutterBottom>
+            {errorMessage}
+          </Typography>
+        )}
         <form onSubmit={handleSubmit}>
-          <TextField id="username" label="Username" variant="filled" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <BrightTextField id="username" label="Username" variant="filled" value={username} onChange={(e) => setUsername(e.target.value)} />
           <Box height={16} />
-          <TextField id="password" label="Password" type="password" variant="filled" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <BrightTextField id="password" label="Password" type="password" variant="filled" value={password} onChange={(e) => setPassword(e.target.value)} />
           <Box height={16} />
           <FuturisticButton type="submit">Log In</FuturisticButton>
         </form>
-        {/* Snackbar for successful login */}
-        <Snackbar
-          open={openSuccessSnackbar}
-          autoHideDuration={6000} // Adjust as needed
-          onClose={handleSuccessSnackbarClose}
-          message="Login successful!"
-        />
-        {/* Snackbar for unsuccessful login */}
-        <Snackbar
-          open={openErrorSnackbar}
-          autoHideDuration={6000} // Adjust as needed
-          onClose={handleErrorSnackbarClose}
-          message="Error in login!"
-        />
       </Container>
     </div>
   );
 };
 
+// Exporting the LoginScreen component
 export default LoginScreen;
