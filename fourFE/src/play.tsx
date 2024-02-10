@@ -1,19 +1,28 @@
-import React, { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  AppBar,
+  Box,
+  FormControl,
+  InputLabel,
+  Toolbar,
+  Select,
+  MenuItem,
+  TextField,
+  Typography,
+  Button
+} from "@mui/material";
+import { IPhoto, IQuestion } from "./types";
+import { NavBarItem } from "./components";
 
 const GamePage = () => {
   const [gameStarted, setGameStarted] = useState(false);
-  const [question, setQuestion] = useState({});
-  const [selectedDifficulty, setSelectedDifficulty] = useState("EASY");
-  const [photos, setPhotos] = useState([]);
-  const [uniqueWords, setUniqueWords] = useState([]);
+  const [question, setQuestion] = useState<IQuestion>({} as IQuestion);
+  const [selectedDifficulty, setSelectedDifficulty] = useState("");
+  const [photos, setPhotos] = useState<IPhoto[]>([]);
+  const [uniqueWords, setUniqueWords] = useState<string[]>([]);
   const [userInput, setUserInput] = useState("");
-  const [submittedWords, setSubmittedWords] = useState([]);
+  const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [lastQuestion, setLastQuestion] = useState(true);
   const [score, setScore] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
@@ -31,7 +40,7 @@ const GamePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login"); // Assuming '/login' is the login page route
+    navigate("/login");
   };
 
   const handleStartGame = async () => {
@@ -79,11 +88,11 @@ const GamePage = () => {
     }
   };
 
-  const handleDifficultyChange = (event) => {
+  const handleDifficultyChange = (event: any) => {
     setSelectedDifficulty(event.target.value);
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: any) => {
     setUserInput(event.target.value);
   };
 
@@ -117,7 +126,7 @@ const GamePage = () => {
     setUserInput("");
   };
 
-  const handleWordButtonClick = async (word) => {
+  const handleWordButtonClick = async (word: string) => {
     try {
       const storedToken = localStorage.getItem("token");
 
@@ -148,7 +157,7 @@ const GamePage = () => {
 
   const handlePlayAgain = () => {
     setGameStarted(false);
-    setQuestion({});
+    setQuestion({} as IQuestion);
     setSelectedDifficulty("EASY");
     setPhotos([]);
     setUniqueWords([]);
@@ -191,7 +200,7 @@ const GamePage = () => {
     }
   };
 
-  const handleAnswerResponse = (responseData) => {
+  const handleAnswerResponse = (responseData: any) => {
     if (!responseData.lastQuestionWasRight) {
       setLastQuestion(false);
       setLives((prevLives) => prevLives - 1);
@@ -210,162 +219,159 @@ const GamePage = () => {
     }
   };
 
-  const WarningMessage = ({ message }) => (
-    <Typography variant="body1" style={{ color: "red", marginTop: "10px" }}>
-      {message}
-    </Typography>
-  );
-
   return (
-    <div
-      style={{ textAlign: "center", marginTop: "50px", position: "relative" }}
-    >
-      <Button
-        variant="outlined"
-        color="secondary"
-        style={{
-          position: "fixed",
-          left: "20%",
-          top: "20%",
-          background: "linear-gradient(45deg, #FE6B8B 20%, #FF8E53 50%)",
-          color: "white",
-        }}
-        onClick={handleLogout}
-      >
-        Logout
-      </Button>
+    <>
+      <Box>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Four Game
+            </Typography>
+            <NavBarItem color="inherit" href="/">Home</NavBarItem>
+            <NavBarItem color="inherit" href="/play">Play </NavBarItem>
+            <NavBarItem color="inherit" href="/leaderboard">Leader board</NavBarItem>
+            <NavBarItem onClick={handleLogout} color="inherit">Logout</NavBarItem>
+          </Toolbar>
+        </AppBar>
 
-      {!gameFinished && (
-        <Typography variant="h3" gutterBottom>
-          Welcome to the Game!
-        </Typography>
-      )}
 
-      {gameFinished && (
-        <div>
-          <Typography
-            variant="h4"
-            style={{ marginBottom: "20px", color: "green" }}
-          >
-            Nice Try! Your final score: {score}
+        {!gameFinished && (
+          <Typography variant="h3" gutterBottom>
+            Welcome to the Game!
           </Typography>
-          <Button variant="contained" color="primary" onClick={handlePlayAgain}>
-            Play Again
-          </Button>
+        )}
 
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleLeaderboardClick}
-            style={{ marginLeft: "10px" }}
-          >
-            Leaderboard
-          </Button>
-        </div>
-      )}
+        {gameFinished && (
+          <div>
+            <Typography
+              variant="h4"
+              style={{ marginBottom: "20px", color: "green" }}
+            >
+              Nice Try! Your final score: {score}
+            </Typography>
+            <Button variant="contained" color="primary" onClick={handlePlayAgain}>
+              Play Again
+            </Button>
 
-      {!gameFinished && !gameStarted ? (
-        <div>
-          <Select
-            value={selectedDifficulty}
-            onChange={handleDifficultyChange}
-            style={{
-              marginBottom: "20px",
-              backgroundColor: "rgba(255, 255, 255, 0.8)",
-            }}
-          >
-            <MenuItem value="EASY">Easy</MenuItem>
-            <MenuItem value="HARD">Hard</MenuItem>
-          </Select>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLeaderboardClick}
+              style={{ marginLeft: "10px" }}
+            >
+              Leaderboard
+            </Button>
+          </div>
+        )}
 
-          <Button variant="contained" color="primary" onClick={handleStartGame}>
-            Start Game
-          </Button>
-        </div>
-      ) : (
-        <div>
-          {lives > 0 ? (
-            <>
-              <Typography variant="h5" style={{ marginBottom: "20px" }}>
-                Score: {score}
-              </Typography>
-
-              <Typography variant="h5" style={{ marginTop: "20px" }}>
-                Choose
-              </Typography>
-
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                }}
+        {!gameFinished && !gameStarted ? (
+          <div>
+            <FormControl>
+              <InputLabel id="difficulty">Difficulty</InputLabel>
+              <Select
+                labelId="difficulty"
+                label="Difficulty"
+                value={selectedDifficulty}
+                onChange={handleDifficultyChange}
               >
-                {photos.map((photo, index) => (
-                  <div key={index} style={{ margin: "10px" }}>
-                    <img
-                      src={photo.url}
-                      alt={`Photo ${index}`}
-                      style={{ width: "300px", height: "200px" }}
-                    />
-                  </div>
-                ))}
-              </div>
+                <MenuItem value="EASY">Easy</MenuItem>
+                <MenuItem value="HARD">Hard</MenuItem>
+              </Select>
+              <Box height={16} />
+              <Button variant="contained" color="primary" onClick={handleStartGame}>
+                Start Game
+              </Button>
+            </FormControl>
+          </div>
+        ) : (
+          <div>
+            {lives > 0 ? (
+              <>
+                <Typography variant="h5" style={{ marginBottom: "20px" }}>
+                  Score: {score}
+                </Typography>
 
-              {selectedDifficulty === "EASY" && (
-                <div style={{ marginTop: "10px" }}>
-                  {uniqueWordsToShow.map((word, wordIndex) => (
-                    <Button
-                      key={wordIndex}
-                      variant="contained"
-                      color="primary"
-                      style={{ margin: "5px" }}
-                      onClick={() => handleWordButtonClick(word)}
-                    >
-                      {word}
-                    </Button>
+                <Typography variant="h5" style={{ marginTop: "20px" }}>
+                  Choose
+                </Typography>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                  }}
+                >
+                  {photos.map((photo, index) => (
+                    <div key={index} style={{ margin: "10px" }}>
+                      <img
+                        src={photo.url}
+                        alt={`Photo ${index}`}
+                        style={{ width: "300px", height: "200px" }}
+                      />
+                    </div>
                   ))}
                 </div>
-              )}
-              {selectedDifficulty === "HARD" && (
-                <div style={{ marginTop: "20px" }}>
-                  <TextField
-                    label="Enter Word"
-                    variant="outlined"
-                    value={userInput}
-                    onChange={handleInputChange}
-                    style={{
-                      marginRight: "10px",
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    }}
-                  />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit}
-                  >
-                    Submit
-                  </Button>
-                </div>
-              )}
 
-              <Typography variant="h6" style={{ marginBottom: "20px" }}>
-                Lives: {lives}
-              </Typography>
+                {selectedDifficulty === "EASY" && (
+                  <div style={{ marginTop: "10px" }}>
+                    {uniqueWordsToShow.map((word, wordIndex) => (
+                      <Button
+                        key={wordIndex}
+                        variant="contained"
+                        color="primary"
+                        style={{ margin: "5px" }}
+                        onClick={() => handleWordButtonClick(word)}
+                      >
+                        {word}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+                {selectedDifficulty === "HARD" && (
+                  <div style={{ marginTop: "20px" }}>
+                    <TextField
+                      label="Enter Word"
+                      variant="outlined"
+                      value={userInput}
+                      onChange={handleInputChange}
+                      style={{
+                        marginRight: "10px",
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      }}
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                )}
 
-              {warningMessage && <WarningMessage message={warningMessage} />}
-            </>
-          ) : (
-            <div>
-              <Typography
-                variant="h4"
-                style={{ marginBottom: "20px", color: "green" }}
-              ></Typography>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+                <Typography variant="h6" style={{ marginBottom: "20px" }}>
+                  Lives: {lives}
+                </Typography>
+
+                {warningMessage &&
+                  <Typography variant="body1" style={{ color: "red", marginTop: "10px" }}>
+                    {warningMessage}
+                  </Typography>
+                }
+              </>
+            ) : (
+              <div>
+                <Typography
+                  variant="h4"
+                  style={{ marginBottom: "20px", color: "green" }}
+                ></Typography>
+              </div>
+            )}
+          </div>
+        )}
+      </Box >
+    </>
   );
 };
 
