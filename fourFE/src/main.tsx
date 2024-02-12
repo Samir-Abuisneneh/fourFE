@@ -17,16 +17,5 @@ const theme = createTheme({
   }
 })
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ThemeProvider theme={theme}>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<LoginScreen />} />
-        <Route path="/login2" element={<LoginScreen2 />} />
-        <Route path="/register" element={<RegScreen />} />
-        <Route path="/play" element={<GamePage />} />
-        <Route path='/leaderboard' element={<Leaderboard />} />
-      </Routes>
-    </BrowserRouter>
-  </ThemeProvider>
+  <App />
 );

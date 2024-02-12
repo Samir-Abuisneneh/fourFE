@@ -28,6 +28,8 @@ const GamePage = () => {
   const [gameFinished, setGameFinished] = useState(false);
   const [lives, setLives] = useState(3);
   const [warningMessage, setWarningMessage] = useState("");
+  const [userCoins, setUserCoins] = useState(0); // State to hold user's coins
+
 
   useEffect(() => {
     if (question.words) {
@@ -82,6 +84,31 @@ const GamePage = () => {
         }
       } else {
         console.error("Error starting new game");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch user's coins when the component mounts
+    fetchUserCoins();
+  }, []);
+  const fetchUserCoins = async () => {
+    try {
+      const storedToken = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/api/user/coins", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUserCoins(userData.coins);
+      } else {
+        console.error("Error fetching user's coins");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -168,6 +195,7 @@ const GamePage = () => {
     setGameFinished(false);
     setLives(3);
     setWarningMessage("");
+    
   };
 
   const navigate = useNavigate();
@@ -222,18 +250,25 @@ const GamePage = () => {
   return (
     <>
       <Box>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Four Game
-            </Typography>
-            <NavBarItem color="inherit" href="/">Home</NavBarItem>
-            <NavBarItem color="inherit" href="/play">Play </NavBarItem>
-            <NavBarItem color="inherit" href="/leaderboard">Leader board</NavBarItem>
-            <NavBarItem onClick={handleLogout} color="inherit">Logout</NavBarItem>
-          </Toolbar>
-        </AppBar>
-
+      <AppBar position="static">
+  <Toolbar>
+    <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }}>
+      Four Game
+    </Typography>
+    <Box sx={{ flexGrow: 1 }}>
+      <Typography variant="h6" component="div" align="center">
+        Coins: {userCoins} {/* Display user's coins */}
+      </Typography>
+    </Box>
+    <Box>
+      <NavBarItem color="inherit" href="/">Home</NavBarItem>
+      <NavBarItem color="inherit" href="/play">Play </NavBarItem>
+      <NavBarItem color="inherit" href="/leaderboard">Leader board</NavBarItem>
+      <NavBarItem color="inherit" href="/payment/pay">Buy coins!</NavBarItem>
+      <NavBarItem onClick={handleLogout} color="inherit">Logout</NavBarItem>
+    </Box>
+  </Toolbar>
+</AppBar>
 
         {!gameFinished && (
           <Typography variant="h3" gutterBottom>
@@ -368,6 +403,17 @@ const GamePage = () => {
                 ></Typography>
               </div>
             )}
+            <div style={{ position: "absolute", bottom: 20, right: 20 }}>
+              {/* Button to buy lives */}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleBuyLives}
+                style={{ marginLeft: "10px" }}
+              >
+                Buy Lives
+              </Button>
+            </div>
           </div>
         )}
       </Box >

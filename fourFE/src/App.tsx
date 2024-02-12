@@ -7,6 +7,7 @@ import './index.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 
+
 import Payment from './stripe/Payment.tsx'
 import Completion from './stripe/Completion.tsx'
 

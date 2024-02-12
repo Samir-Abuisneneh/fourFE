@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'react';
 
 import {Elements} from '@stripe/react-stripe-js';
-import CheckoutForm from './CheckoutForm'
+import CheckoutForm from './CheckOutForm'
 
-function Payment(props) {
+
+function Payment(props: { stripePromise: any; }) {
   const { stripePromise } = props;
   const [ clientSecret, setClientSecret ] = useState('');
 

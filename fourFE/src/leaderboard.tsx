@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
 
 function Leaderboard() {
-  const [leaderboardData, setLeaderboardData] = useState(null);
+  const [leaderboardData, setLeaderboardData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +67,7 @@ function Leaderboard() {
       <h2>Leaderboards</h2>
 
       <h3>Easy Difficulty</h3>
-      {easyDifficultyData && easyDifficultyData.length > 0 ? (
+      {easyDifficultyData.length > 0 ? (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -95,7 +95,7 @@ function Leaderboard() {
       )}
 
       <h3>Hard Difficulty</h3>
-      {hardDifficultyData && hardDifficultyData.length > 0 ? (
+      {hardDifficultyData.length > 0 ? (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>

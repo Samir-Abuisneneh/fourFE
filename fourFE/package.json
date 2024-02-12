@@ -14,6 +14,8 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.4",
     "@mui/material": "^5.15.3",
+    "@stripe/react-stripe-js": "^2.4.0",
+    "@stripe/stripe-js": "^2.4.0",
     "axios": "^1.6.5",
     "cors-anywhere": "^0.4.4",
     "dom": "^0.0.3",
