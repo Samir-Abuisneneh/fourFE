@@ -90,14 +90,10 @@ const GamePage = () => {
     }
   };
 
-  useEffect(() => {
-    // Fetch user's coins when the component mounts
-    fetchUserCoins();
-  }, []);
   const fetchUserCoins = async () => {
     try {
       const storedToken = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8080/api/user/coins", {
+      const response = await fetch("http://localhost:8080/api/user", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${storedToken}`,
@@ -114,6 +110,12 @@ const GamePage = () => {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    // Fetch user's coins when the component mounts
+    fetchUserCoins();
+  }, []);
+  
 
   const handleDifficultyChange = (event: any) => {
     setSelectedDifficulty(event.target.value);
@@ -238,14 +240,34 @@ const GamePage = () => {
       setScore(responseData.score);
       setWarningMessage("");
     }
-
-    if (responseData.wrongAnswers <= 2) {
+    console.log(responseData)
+    if (responseData.wrongAnswers < responseData.maxLives) {
       console.log("new question");
       newQuestion();
     } else {
       setGameFinished(true);
     }
   };
+
+
+  const handleBuyLives  = async () => {
+    const storedToken = localStorage.getItem("token");
+    const responseQuestion = await fetch(
+      "http://localhost:8080/api/play/add-life",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      }
+    );
+
+    if (responseQuestion.ok) {
+      setLives(lives + 1 )
+    } else {
+      console.error("Error Adding Lives ");
+    }
+  }
 
   return (
     <>

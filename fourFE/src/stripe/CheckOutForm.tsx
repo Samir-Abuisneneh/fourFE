@@ -22,7 +22,30 @@ import {
       }
   
       setIsLoading(true);
+
+      const id = elements._commonOptions.clientSecret.id;
+
+      
+      try {
+        const storedToken = localStorage.getItem("token");
+        console.log("ASDFdasf")
+        const response = await fetch("http://localhost:8080/api/payment/add-coins?payId="+id, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken}`,
+          }
+        });
   
+        if (response.ok) {
+          const data = await response.json();
+        } else {
+          console.error("Error add user's coins");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -31,6 +54,27 @@ import {
         },
       });
   
+      console.log(error)
+
+
+      try {
+        const storedToken = localStorage.getItem("token");
+        const response = await fetch("http://localhost:8080/api/payment/remove-coins?payId="+id, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${storedToken}`,
+          }
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+        } else {
+          console.error("Error fetching user's coins");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
       // This point will only be reached if there is an immediate error when
       // confirming the payment. Otherwise, your customer will be redirected to
       // your `return_url`. For some payment methods like iDEAL, your customer will
